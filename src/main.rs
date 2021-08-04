@@ -1,6 +1,6 @@
 // Create a request class
 #[derive(Debug)]
-pub struct OrderDetail {
+struct OrderDetail {
     name: String,
     quantity: u8,
 }
@@ -32,7 +32,7 @@ impl OrderDetail {
 
 // Create concrete classes to implement the Order interface
 #[derive(Debug)]
-pub enum Transaction {
+enum Transaction {
     Buy(OrderDetail),
     Sell(OrderDetail),
 }
@@ -72,7 +72,7 @@ impl Transaction {
 // }
 
 // Create the command interface
-// pub trait Order {
+// trait Order {
 //     fn execute(&self);
 // }
 
@@ -89,23 +89,23 @@ impl Transaction {
 // }
 
 // Create command invoker class
-pub struct Broker {
-    // pub orderlist: Vec<Box<dyn Order>>,
+struct Broker {
+    // orderlist: Vec<Box<dyn Order>>,
     orderlist: Vec<Transaction>,
 }
 
 impl Broker {
-    pub fn new() -> Self {
+    fn new() -> Self {
         Self {
             orderlist: Vec::new(),
         }
     }
 
-    pub fn take_order(&mut self, order: Transaction) {
+    fn take_order(&mut self, order: Transaction) {
 	self.orderlist.push(order);
     }
 
-    pub fn place_orders(&mut self) {
+    fn place_orders(&mut self) {
 	for order in self.orderlist.iter() {
 	    order.execute();
 	}
