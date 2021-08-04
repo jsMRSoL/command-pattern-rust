@@ -1,11 +1,11 @@
 // Create a request class
 #[derive(Debug)]
-struct Stock {
+struct OrderDetail {
     name: String,
     quantity: u8,
 }
 
-impl Default for Stock {
+impl Default for OrderDetail {
     fn default() -> Self {
         Self {
             name: "ABC".into(),
@@ -14,7 +14,7 @@ impl Default for Stock {
     }
 }
 
-impl Stock {
+impl OrderDetail {
     fn buy(&self) {
         println!(
             "Stock [ Name: {}, Quantity: {}] bought",
@@ -33,34 +33,34 @@ impl Stock {
 // Create concrete classes to implement the Order interface
 #[derive(Debug)]
 struct BuyStock {
-    abc_stock: Stock,
+    order_detail: OrderDetail,
 }
 
 impl BuyStock {
-    fn new(abc_stock: Stock) -> Self {
-        Self {abc_stock}
+    fn new(abc_stock: OrderDetail) -> Self {
+        Self {order_detail: abc_stock}
     }
 }
 
 #[derive(Debug)]
 struct SellStock {
-    abc_stock: Stock,
+    abc_stock: OrderDetail,
 }
 
 impl SellStock {
-    fn new(abc_stock: Stock) -> Self {
+    fn new(abc_stock: OrderDetail) -> Self {
         Self { abc_stock}
     }
 }
 
 // Create the command interface
-pub trait Order {
+trait Order {
     fn execute(&self);
 }
 
 impl Order for BuyStock {
     fn execute(&self) {
-        self.abc_stock.buy();
+        self.order_detail.buy();
     }
 }
 
@@ -71,8 +71,8 @@ impl Order for SellStock {
 }
 
 // Create command invoker class
-pub struct Broker {
-    pub orderlist: Vec<Box<dyn Order>>,
+struct Broker {
+    orderlist: Vec<Box<dyn Order>>,
 }
 
 impl Broker {
@@ -82,7 +82,7 @@ impl Broker {
         }
     }
 
-    pub fn take_order(&mut self, order: Box<dyn Order>) {
+    fn take_order(&mut self, order: Box<dyn Order>) {
 	self.orderlist.push(order);
     }
 
@@ -98,9 +98,9 @@ impl Broker {
 
 // Use the Broker class to take and execute commands.
 fn main() {
-    let abc_stock: Stock = Stock::default();
+    let abc_stock: OrderDetail = OrderDetail::default();
     let buy_stock_order: BuyStock = BuyStock::new(abc_stock);
-    let sell_stock_order: SellStock = SellStock::new(Stock::default());
+    let sell_stock_order: SellStock = SellStock::new(OrderDetail::default());
 
     let mut broker: Broker = Broker::new();
     broker.take_order(Box::new(buy_stock_order));
