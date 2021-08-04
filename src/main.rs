@@ -50,43 +50,6 @@ impl Transaction {
    } 
 }
 
-// struct BuyStock {
-//     abc_stock: OrderDetail,
-// }
-
-// impl BuyStock {
-//     fn new(abc_stock: OrderDetail) -> Self {
-//         Self {abc_stock}
-//     }
-// }
-
-// #[derive(Debug)]
-// struct SellStock {
-//     abc_stock: OrderDetail,
-// }
-
-// impl SellStock {
-//     fn new(abc_stock: OrderDetail) -> Self {
-//         Self { abc_stock}
-//     }
-// }
-
-// Create the command interface
-// trait Order {
-//     fn execute(&self);
-// }
-
-// impl Order for BuyStock {
-//     fn execute(&self) {
-//         self.abc_stock.buy();
-//     }
-// }
-
-// impl Order for SellStock {
-//     fn execute(&self) {
-//         self.abc_stock.sell();
-//     }
-// }
 
 // Create command invoker class
 struct Broker {
@@ -118,15 +81,12 @@ impl Broker {
 // Use the Broker class to take and execute commands.
 fn main() {
     let abc_stock: OrderDetail = OrderDetail::default();
-    // let buy_stock_order: BuyStock = BuyStock::new(abc_stock);
     let buy_stock_order = Transaction::Buy(abc_stock);
-    // let sell_stock_order: SellStock = SellStock::new(OrderDetail::default());
     let sell_stock_order = Transaction::Buy(OrderDetail::default());
 
     let mut broker: Broker = Broker::new();
-    // broker.take_order(Box::new(buy_stock_order));
+
     broker.take_order(buy_stock_order);
-    // broker.take_order(Box::new(sell_stock_order));
     broker.take_order(sell_stock_order);
 
     broker.place_orders();
