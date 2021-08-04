@@ -1,11 +1,11 @@
 // Create a request class
 #[derive(Debug)]
-struct Stock {
+pub struct OrderDetail {
     name: String,
     quantity: u8,
 }
 
-impl Default for Stock {
+impl Default for OrderDetail {
     fn default() -> Self {
         Self {
             name: "ABC".into(),
@@ -14,7 +14,7 @@ impl Default for Stock {
     }
 }
 
-impl Stock {
+impl OrderDetail {
     fn buy(&self) {
         println!(
             "Stock [ Name: {}, Quantity: {}] bought",
@@ -32,47 +32,66 @@ impl Stock {
 
 // Create concrete classes to implement the Order interface
 #[derive(Debug)]
-struct BuyStock {
-    abc_stock: Stock,
+pub enum Transaction {
+    Buy(OrderDetail),
+    Sell(OrderDetail),
 }
 
-impl BuyStock {
-    fn new(abc_stock: Stock) -> Self {
-        Self {abc_stock}
-    }
+impl Transaction {
+   fn execute(&self) {
+       match &self {
+	   Transaction::Buy(order_detail) => {
+	       order_detail.buy();
+	   },
+	   Transaction::Sell(order_detail) => {
+	       order_detail.sell();
+	   }
+       } 
+   } 
 }
 
-#[derive(Debug)]
-struct SellStock {
-    abc_stock: Stock,
-}
+// struct BuyStock {
+//     abc_stock: OrderDetail,
+// }
 
-impl SellStock {
-    fn new(abc_stock: Stock) -> Self {
-        Self { abc_stock}
-    }
-}
+// impl BuyStock {
+//     fn new(abc_stock: OrderDetail) -> Self {
+//         Self {abc_stock}
+//     }
+// }
+
+// #[derive(Debug)]
+// struct SellStock {
+//     abc_stock: OrderDetail,
+// }
+
+// impl SellStock {
+//     fn new(abc_stock: OrderDetail) -> Self {
+//         Self { abc_stock}
+//     }
+// }
 
 // Create the command interface
-pub trait Order {
-    fn execute(&self);
-}
+// pub trait Order {
+//     fn execute(&self);
+// }
 
-impl Order for BuyStock {
-    fn execute(&self) {
-        self.abc_stock.buy();
-    }
-}
+// impl Order for BuyStock {
+//     fn execute(&self) {
+//         self.abc_stock.buy();
+//     }
+// }
 
-impl Order for SellStock {
-    fn execute(&self) {
-        self.abc_stock.sell();
-    }
-}
+// impl Order for SellStock {
+//     fn execute(&self) {
+//         self.abc_stock.sell();
+//     }
+// }
 
 // Create command invoker class
 pub struct Broker {
-    pub orderlist: Vec<Box<dyn Order>>,
+    // pub orderlist: Vec<Box<dyn Order>>,
+    orderlist: Vec<Transaction>,
 }
 
 impl Broker {
@@ -82,7 +101,7 @@ impl Broker {
         }
     }
 
-    pub fn take_order(&mut self, order: Box<dyn Order>) {
+    pub fn take_order(&mut self, order: Transaction) {
 	self.orderlist.push(order);
     }
 
@@ -98,13 +117,17 @@ impl Broker {
 
 // Use the Broker class to take and execute commands.
 fn main() {
-    let abc_stock: Stock = Stock::default();
-    let buy_stock_order: BuyStock = BuyStock::new(abc_stock);
-    let sell_stock_order: SellStock = SellStock::new(Stock::default());
+    let abc_stock: OrderDetail = OrderDetail::default();
+    // let buy_stock_order: BuyStock = BuyStock::new(abc_stock);
+    let buy_stock_order = Transaction::Buy(abc_stock);
+    // let sell_stock_order: SellStock = SellStock::new(OrderDetail::default());
+    let sell_stock_order = Transaction::Buy(OrderDetail::default());
 
     let mut broker: Broker = Broker::new();
-    broker.take_order(Box::new(buy_stock_order));
-    broker.take_order(Box::new(sell_stock_order));
+    // broker.take_order(Box::new(buy_stock_order));
+    broker.take_order(buy_stock_order);
+    // broker.take_order(Box::new(sell_stock_order));
+    broker.take_order(sell_stock_order);
 
     broker.place_orders();
 }
